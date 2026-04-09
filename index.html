@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AXIOM — Research Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Live background canvas -->
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- Grain overlay -->
+  <div class="grain"></div>
+
+  <!-- API Key Gate -->
+  <div id="gate" class="gate">
+    <div class="gate-inner">
+      <div class="gate-logo">
+        <span class="gate-logo-mark">A</span>
+      </div>
+      <h1 class="gate-title">AXIOM</h1>
+      <p class="gate-sub">Research Intelligence Terminal</p>
+      <div class="gate-divider"></div>
+      <p class="gate-instruction">Enter your Groq API key to initialize the research engine. Your key is stored locally and never transmitted beyond Groq's servers.</p>
+      <div class="gate-field">
+        <label class="field-label">GROQ API KEY</label>
+        <div class="field-wrap">
+          <input
+            id="api-key-input"
+            type="password"
+            placeholder="gsk_••••••••••••••••••••••••••••••••"
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <button id="key-toggle" class="key-toggle" title="Show/hide key">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+        <span class="field-hint">Get your key at <a href="https://console.groq.com" target="_blank">console.groq.com</a> — it's free</span>
+      </div>
+      <button id="gate-submit" class="gate-btn">
+        <span>Initialize Engine</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+      <p id="gate-error" class="gate-error hidden">Invalid key format. Keys begin with <code>gsk_</code></p>
+    </div>
+  </div>
+
+  <!-- Main App -->
+  <div id="app" class="app hidden">
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar">
+      <div class="sidebar-head">
+        <div class="brand">
+          <span class="brand-mark">A</span>
+          <div class="brand-text">
+            <span class="brand-name">AXIOM</span>
+            <span class="brand-tagline">Research Intelligence</span>
+          </div>
+        </div>
+        <button id="new-session-btn" class="new-session-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          New Session
+        </button>
+      </div>
+
+      <div class="sessions-label">SESSIONS</div>
+      <div id="sessions-list" class="sessions-list">
+        <!-- Populated by JS -->
+      </div>
+
+      <div class="sidebar-footer">
+        <div id="connection-status" class="connection-status">
+          <span class="status-dot"></span>
+          <span class="status-text">Groq Connected</span>
+        </div>
+        <button id="settings-btn" class="icon-btn" title="Settings">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Panel -->
+    <main class="main">
+
+      <!-- Top bar -->
+      <header class="topbar">
+        <button id="sidebar-toggle" class="icon-btn" title="Toggle sidebar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <div id="session-title" class="session-title">New Research Session</div>
+        <div class="mode-group">
+          <button class="mode-btn active" data-mode="balanced">Balanced</button>
+          <button class="mode-btn" data-mode="precise">Precise</button>
+          <button class="mode-btn" data-mode="exhaustive">Exhaustive</button>
+        </div>
+      </header>
+
+      <!-- Messages -->
+      <div id="messages" class="messages">
+        <!-- Empty state -->
+        <div id="empty-state" class="empty-state">
+          <div class="empty-glyph">∴</div>
+          <h2 class="empty-title">What are you researching?</h2>
+          <p class="empty-body">Ask a question, explore a hypothesis, or request a deep analysis. AXIOM synthesizes knowledge across all domains.</p>
+          <div class="prompts-grid">
+            <button class="prompt-chip" data-prompt="Explain the mechanism of CRISPR-Cas9 and its ethical implications in human germline editing">Germline editing ethics</button>
+            <button class="prompt-chip" data-prompt="What are the latest theoretical frameworks explaining dark energy in cosmology?">Dark energy frameworks</button>
+            <button class="prompt-chip" data-prompt="Analyze the geopolitical consequences of de-dollarization trends in emerging economies">De-dollarization trends</button>
+            <button class="prompt-chip" data-prompt="How do transformer attention mechanisms work, and what are their computational limitations?">Transformer attention limits</button>
+            <button class="prompt-chip" data-prompt="Trace the philosophical lineage from Kant's categorical imperative to modern AI alignment">Kant to AI alignment</button>
+            <button class="prompt-chip" data-prompt="What evidence exists for panspermia and how does it affect our understanding of abiogenesis?">Panspermia evidence</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Input area -->
+      <div class="input-dock">
+        <div class="input-shell" id="input-shell">
+          <textarea
+            id="user-input"
+            class="user-input"
+            placeholder="Ask anything…"
+            rows="1"
+            spellcheck="true"
+          ></textarea>
+          <div class="input-actions">
+            <span class="char-mode" id="mode-indicator">balanced</span>
+            <button id="send-btn" class="send-btn" title="Send (Enter)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+            </button>
+          </div>
+        </div>
+        <p class="input-hint"><kbd>Enter</kbd> to send &nbsp;·&nbsp; <kbd>Shift+Enter</kbd> for new line &nbsp;·&nbsp; Powered by Groq LPU™</p>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Settings Modal -->
+  <div id="settings-modal" class="modal-overlay hidden">
+    <div class="modal">
+      <div class="modal-head">
+        <h2 class="modal-title">Settings</h2>
+        <button id="modal-close" class="icon-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="gate-field">
+          <label class="field-label">GROQ API KEY</label>
+          <div class="field-wrap">
+            <input id="settings-key-input" type="password" placeholder="gsk_••••••••••••••" autocomplete="off" spellcheck="false" />
+            <button id="settings-key-toggle" class="key-toggle" title="Show/hide">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="modal-stats" id="modal-stats">
+          <!-- populated by JS -->
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button id="clear-data-btn" class="danger-btn">Clear All Data</button>
+        <button id="save-settings-btn" class="gate-btn">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
