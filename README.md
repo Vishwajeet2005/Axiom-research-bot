@@ -1,68 +1,61 @@
-# AXIOM — Research Intelligence
-
-AXIOM is a research chat bot powered by the **Groq API** and the **llama-3.3-70b-versatile** AI model. It acts as an intelligent research terminal that synthesizes knowledge across various domains with lightning-fast responses.
-
-🚀 **[Live Demo](https://axiom-buddy.netlify.app/)**
-
+# Axiom
+ 
+![Status](https://img.shields.io/badge/Status-Live-success) ![Stack](https://img.shields.io/badge/Stack-HTML%20%7C%20CSS%20%7C%20JS%20%7C%20Groq-informational) ![Deploy](https://img.shields.io/badge/Deployed-Netlify-00C7B7)
+ 
+**Your AI research buddy — a lightweight conversational assistant powered by Llama 3.3 70B via Groq.**
+ 
+🔗 **[Try it → axiom-buddy.netlify.app](https://axiom-buddy.netlify.app)**
+ 
+---
+ 
+## What it does
+ 
+Axiom is a clean, fast research chatbot designed to feel like talking to a knowledgeable friend. No complicated setup, no accounts — just open it and start asking questions. Powered by Llama 3.3 70B (one of the most capable open-weight models) via the Groq API for near-instant responses.
+ 
+---
+ 
 ## Features
-
-- **Groq API Integration:** Blazing fast inference powered by Groq LPUs.
-- **Llama 3.3 70B:** Uses state-of-the-art open-weights model for high-quality research and analysis.
-- **Local Key Storage:** Your API key is stored securely in your browser's local storage and is only transmitted directly to Groq's servers.
-- **Beautiful UI:** A dynamic and premium user interface with interactive elements, live background canvas, and multiple research modes (Balanced, Precise, Exhaustive).
-
-## Getting Started
-
-### Prerequisites
-
-To run this project locally, you don't need any complex build tools—just a modern web browser and a way to serve the files.
-
-### Installation
-
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/Vishwajeet2005/Axiom-research-bot.git
-   cd Axiom-research-bot
-   ```
-
-2. **Serve the application:**
-   You can use any local development server. For example, using Python or Node.js:
-   
-   *Using Python:*
-   ```bash
-   python -m http.server 8000
-   ```
-   
-   *Using Node (npx):*
-   ```bash
-   npx serve .
-   ```
-
-3. **Open the app:**
-   Navigate to `http://localhost:8000` (or the port specified by your server) in your web browser.
-
-4. **Initialize Engine:**
-   You will need a free [Groq API Key](https://console.groq.com) to start using the research terminal.
-
-## Project Structure
-
-```text
-Axiom-research-bot/
-├── index.html          # Main HTML structure
-├── README.md           # Project documentation
-└── assets/
-    ├── css/
-    │   └── style.css   # Stylesheets
-    └── js/
-        └── app.js      # Application logic and API interaction
+ 
+- Conversational interface with chat history
+- Powered by `llama-3.3-70b-versatile` for high-quality, nuanced answers
+- Zero dependencies — pure HTML, CSS, and vanilla JavaScript
+- Deployed on Netlify — always on, no cold starts
+- Clean minimal UI optimised for reading long responses
+---
+ 
+## Tech stack
+ 
+| Layer | Technology |
+|---|---|
+| Frontend | HTML, CSS, Vanilla JavaScript |
+| AI | Groq API (`llama-3.3-70b-versatile`) |
+| Deployment | Netlify |
+ 
+---
+ 
+## Getting started
+ 
+```bash
+git clone https://github.com/Vishwajeet2005/Axiom-research-bot.git
+cd Axiom-research-bot
 ```
-
-## Technologies Used
-
-- **HTML5**
-- **Vanilla CSS** (Custom properties, Flexbox, Grid, Animations)
-- **Vanilla JavaScript** (ES6+, Fetch API, LocalStorage)
-
-## License
-
-This project is open-source. Feel free to use and modify it.
+ 
+Open `index.html` directly in your browser, or serve it locally:
+ 
+```bash
+npx serve .
+```
+ 
+To use your own Groq API key, add it in the configuration section of `app.js`.
+ 
+---
+ 
+## Project structure
+ 
+```
+Axiom-research-bot/
+├── index.html    # App shell
+├── style.css     # UI styling
+└── app.js        # Groq API integration + chat logic
+```
+ 
