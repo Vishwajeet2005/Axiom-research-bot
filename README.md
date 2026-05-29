@@ -1,5 +1,7 @@
 # Axiom Research Bot
 
+**Live Demo:** [https://axiom-buddy.netlify.app/](https://axiom-buddy.netlify.app/)
+
 Axiom is a highly sophisticated, locally-stored AI research intelligence bot wrapped in a stunning, cinematic "liquid-glass" user interface. It connects directly to the Groq API for lightning-fast token streaming and saves your research sessions locally using IndexedDB.
 
 ![Axiom UI Overview](public/favicon.svg)
