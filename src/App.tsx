@@ -32,6 +32,7 @@ function App() {
   const [showSidebar, setShowSidebar] = useState(false);
   const [settingsKeyInput, setSettingsKeyInput] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   // Background Video Effect
   useEffect(() => {
@@ -132,7 +133,7 @@ function App() {
   }, [messages]);
 
   async function createSession() {
-    const id = `s_${Date.now()}`;
+    const id = crypto.randomUUID();
     const ses: Session = { id, title: 'New Research Session', createdAt: Date.now(), msgCount: 0 };
     await dbPut('sessions', ses);
     setSessions(prev => [ses, ...prev]);
@@ -141,6 +142,11 @@ function App() {
   }
 
   async function loadSession(id: string) {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+      setIsStreaming(false);
+    }
     setActiveId(id);
     const msgs = await dbGetAllByIndex<Message>('messages', 'sessionId', id);
     msgs.sort((a, b) => a.ts - b.ts);
@@ -171,14 +177,15 @@ function App() {
 
     let currentSessionId = activeId;
     if (!currentSessionId) {
-      currentSessionId = `s_${Date.now()}`;
+      currentSessionId = crypto.randomUUID();
       const ses: Session = { id: currentSessionId, title: 'New Research Session', createdAt: Date.now(), msgCount: 0 };
       await dbPut('sessions', ses);
       setSessions(prev => [ses, ...prev]);
       setActiveId(currentSessionId);
     }
 
-    const uMsg: Message = { id: `m_${Date.now()}`, sessionId: currentSessionId, role: 'user', content: text, ts: Date.now() };
+    const uMsgId = crypto.randomUUID();
+    const uMsg: Message = { id: uMsgId, sessionId: currentSessionId, role: 'user', content: text, ts: Date.now() };
     await dbPut('messages', uMsg);
     
     // Optimistic update
@@ -197,14 +204,17 @@ function App() {
       return s;
     }));
 
-    const aMsgId = `m_${Date.now()}_a`;
+    const aMsgId = crypto.randomUUID();
     const aiMsg: Message = { id: aMsgId, sessionId: currentSessionId, role: 'assistant', content: '', ts: Date.now() + 1 };
     setMessages(prev => [...prev, aiMsg]);
 
     const historyMsgs = messages.concat(uMsg).map(m => ({ role: m.role as 'user'|'assistant', content: m.content }));
 
+    if (abortControllerRef.current) abortControllerRef.current.abort();
+    abortControllerRef.current = new AbortController();
+
     try {
-      const fullResponse = await streamGroqCompletion(apiKey, historyMsgs, currentMode, (chunk) => {
+      const fullResponse = await streamGroqCompletion(apiKey, historyMsgs, currentMode, abortControllerRef.current.signal, (chunk) => {
         setMessages(prev => prev.map(m => m.id === aMsgId ? { ...m, content: chunk } : m));
       });
 
@@ -222,8 +232,10 @@ function App() {
         return s;
       }));
     } catch (err: any) {
+      if (err.name === 'AbortError') return;
       const errContent = `**Error:** ${err.message}\n\nPlease check your Groq API key in Settings.`;
-      const errMsg: Message = { id: `m_${Date.now()}_e`, sessionId: currentSessionId, role: 'assistant', content: errContent, ts: Date.now() + 2 };
+      const errMsgId = crypto.randomUUID();
+      const errMsg: Message = { id: errMsgId, sessionId: currentSessionId, role: 'assistant', content: errContent, ts: Date.now() + 2 };
       await dbPut('messages', errMsg);
       setMessages(prev => {
         // remove the streaming placeholder
@@ -232,6 +244,7 @@ function App() {
       });
     } finally {
       setIsStreaming(false);
+      abortControllerRef.current = null;
     }
   }
 
