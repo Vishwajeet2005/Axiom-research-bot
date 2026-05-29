@@ -6,17 +6,10 @@ import type { Session, Message } from './db';
 import { streamGroqCompletion } from './groq';
 import { renderMarkdown } from './markdown';
 
-const Instagram = ({ size = 24, className = "" }) => (
+const Github = ({ size = 24, className = "" }) => (
   <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-    <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
-    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
-  </svg>
-);
-
-const Twitter = ({ size = 24, className = "" }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-    <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/>
+    <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.03c3.18-.35 6.5-1.5 6.5-7.1a5.2 5.2 0 0 0-1.5-3.8 4.9 4.9 0 0 0 .15-3.7s-1.2-.38-3.9 1.4a13.3 13.3 0 0 0-7 0C5.6 1.6 4.4 2 4.4 2a4.9 4.9 0 0 0 .15 3.8A5.2 5.2 0 0 0 3 9.6c0 5.6 3.3 6.75 6.5 7.1a4.8 4.8 0 0 0-1 3.03v4"/>
+    <path d="M9 21c-3 1-4-2-4-2"/>
   </svg>
 );
 
@@ -485,15 +478,9 @@ function App() {
       {/* Social icons footer */}
       {isEmpty && (
         <footer className="relative z-10 flex justify-center gap-4 pb-12 animate-in fade-in duration-1000 delay-300">
-          <button aria-label="Instagram" className="liquid-glass rounded-full p-4 text-white/80 hover:text-white hover:bg-white/5 transition-all">
-            <Instagram size={20} />
-          </button>
-          <button aria-label="Twitter" className="liquid-glass rounded-full p-4 text-white/80 hover:text-white hover:bg-white/5 transition-all">
-            <Twitter size={20} />
-          </button>
-          <button aria-label="Globe" className="liquid-glass rounded-full p-4 text-white/80 hover:text-white hover:bg-white/5 transition-all">
-            <Globe size={20} />
-          </button>
+          <a href="https://github.com/Vishwajeet2005/Axiom-research-bot" target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="liquid-glass rounded-full p-4 text-white/80 hover:text-white hover:bg-white/5 transition-all">
+            <Github size={20} />
+          </a>
         </footer>
       )}
     </div>
