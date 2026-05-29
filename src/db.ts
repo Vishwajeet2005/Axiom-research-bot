@@ -59,7 +59,16 @@ export async function dbGet<T>(store: string, key: string): Promise<T | undefine
 }
 
 export async function dbPut(store: string, val: any): Promise<void> {
-  await tx(store, 'readwrite', (s) => s.put(val));
+  try {
+    await tx(store, 'readwrite', (s) => s.put(val));
+  } catch (err: any) {
+    if (err.name === 'QuotaExceededError') {
+      console.error('Storage quota exceeded. Please clear some data in Settings.');
+      alert('Storage quota exceeded. Please clear some data in Settings.');
+      return;
+    }
+    console.error('IndexedDB Put Error:', err);
+  }
 }
 
 export async function dbDel(store: string, key: string): Promise<void> {
