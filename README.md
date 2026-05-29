@@ -1,73 +1,60 @@
-# React + TypeScript + Vite
+# Axiom Research Bot
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Axiom is a highly sophisticated, locally-stored AI research intelligence bot wrapped in a stunning, cinematic "liquid-glass" user interface. It connects directly to the Groq API for lightning-fast token streaming and saves your research sessions locally using IndexedDB.
 
-Currently, two official plugins are available:
+![Axiom UI Overview](public/favicon.svg)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## ✨ Features
 
-## React Compiler
+- **Cinematic Interface:** A fully responsive, dark-mode focused UI with a looping background video and frosted `.liquid-glass` overlays.
+- **Lightning Fast Inference:** Powered by the Groq API using the `llama-3.3-70b-versatile` model.
+- **Real-time Streaming:** See Axiom's thoughts appear instantly as tokens stream back.
+- **Local Privacy:** No backend required! Your sessions, message history, and API keys are stored entirely locally on your device via IndexedDB.
+- **Smart Markdown Parsing:** Axiom's responses are cleanly parsed into readable markdown, code blocks, and formatted lists.
+- **Customizable Modes:** Easily switch between `Balanced`, `Precise`, and `Exhaustive` research modes to tune Axiom's verbosity and depth.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🚀 Tech Stack
 
-## Expanding the ESLint configuration
+- **Framework:** React 18 with TypeScript
+- **Build Tool:** Vite
+- **Styling:** Tailwind CSS v3 with custom CSS pseudo-elements for the glass effect
+- **Icons:** Lucide React (plus custom SVG paths for social icons)
+- **Database:** IndexedDB (`src/db.ts`)
+- **API Connectivity:** Native Fetch API with ReadableStream for Groq (`src/groq.ts`)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 🛠️ Running Locally
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/Vishwajeet2005/Axiom-research-bot.git
+   cd Axiom-research-bot
+   ```
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+2. **Install Dependencies**
+   ```bash
+   npm install
+   ```
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+3. **Start the Development Server**
+   ```bash
+   npm run dev
+   ```
+   The app will be available at `http://localhost:5173/`.
+
+4. **Add your API Key**
+   - Click the **Settings** button in the top right.
+   - Enter your Groq API Key (starts with `gsk_`).
+   - Click **Save Changes** and start researching!
+
+## 📦 Deployment
+
+This project includes a `netlify.toml` file, making it ready for 1-click continuous deployment on Netlify. It automatically builds the Vite app and serves the `dist/` directory.
+
+```bash
+# Build for production
+npm run build
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 📜 License
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+MIT License. Free to use, modify, and distribute.
