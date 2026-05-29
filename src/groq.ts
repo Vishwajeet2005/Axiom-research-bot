@@ -7,6 +7,7 @@ export async function streamGroqCompletion(
   apiKey: string,
   messages: ChatMessage[],
   mode: 'balanced' | 'precise' | 'exhaustive',
+  abortSignal: AbortSignal,
   onChunk: (chunk: string) => void
 ): Promise<string> {
   const systemMap = {
@@ -17,6 +18,7 @@ export async function streamGroqCompletion(
 
   const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
     method: 'POST',
+    signal: abortSignal,
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${apiKey}`,
@@ -43,21 +45,31 @@ export async function streamGroqCompletion(
 
   const decoder = new TextDecoder();
   let full = '';
+  let buffer = '';
 
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    const chunk = decoder.decode(value);
-    for (const line of chunk.split('\n')) {
-      if (!line.startsWith('data: ')) continue;
-      const data = line.slice(6).trim();
-      if (data === '[DONE]') continue;
-      try {
-        const delta = JSON.parse(data).choices?.[0]?.delta?.content || '';
-        full += delta;
-        onChunk(full);
-      } catch (_) {}
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop() || '';
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        const data = line.slice(6).trim();
+        if (data === '[DONE]') continue;
+        try {
+          const delta = JSON.parse(data).choices?.[0]?.delta?.content || '';
+          full += delta;
+          onChunk(full);
+        } catch (_) {}
+      }
     }
+  } catch (err: any) {
+    if (err.name === 'AbortError') {
+      throw err;
+    }
+    throw new Error('Stream interrupted: ' + err.message);
   }
 
   return full;
