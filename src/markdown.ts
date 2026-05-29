@@ -18,7 +18,10 @@ export function renderMarkdown(raw: string): string {
       .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
       .replace(/\*(.+?)\*/g, '<em>$1</em>')
       .replace(/`([^`]+)`/g, '<code>$1</code>')
-      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, text, url) => {
+        const sanitizedUrl = /^(https?|mailto):/i.test(url) ? url : 'about:blank';
+        return `<a href="${sanitizedUrl}" target="_blank" rel="noopener">${text}</a>`;
+      });
   }
 
   while (i < lines.length) {
